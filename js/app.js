@@ -164,6 +164,14 @@ function filaFormatos(c) {
   return html + `</div>`;
 }
 
+function fotograma(y, num) {
+  return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px"><svg width="56" height="56" viewBox="0 0 56 56"><rect x="1" y="1" width="54" height="54" rx="6" fill="#FFFFFF" stroke="${C}" stroke-width="2"/><line x1="8" y1="46" x2="48" y2="46" stroke="${C}" stroke-width="2"/><circle cx="28" cy="${y}" r="7" fill="#2E6FD8"/></svg>${num}</div>`;
+}
+
+function tira(fotogramas) {
+  return `<div style="display:flex;align-items:center;gap:6px">${fotogramas.join('<span style="font-size:20px">→</span>')}</div>`;
+}
+
 const DEMOS = {
   compresion: () =>
     `<div class="demo">${caja('PNG', imagen('scene.png'), `<span>${PESOS['scene.png']} KB</span>`)}${caja('JPG', imagen('scene_q90.jpg'), `<span>${PESOS['scene_q90.jpg']} KB</span>`)}${caja('WEBP', imagen('scene.webp'), `<span>${PESOS['scene.webp']} KB</span>`)}</div>`,
@@ -172,7 +180,7 @@ const DEMOS = {
   transparencia: () =>
     `<div class="demo">${caja('PNG', imagen('logo.png'), valor('si'), 'oscuro')}${caja('GIF', imagen('logo.gif'), valor('si'), 'oscuro')}${caja('JPG', imagen('logo.jpg'), valor('no'), 'oscuro')}</div>`,
   animacion: () =>
-    `<div class="demo">${caja('GIF · WEBP · SVG', imagen('frames.png'), valor('si'))}${caja('JPG · PNG', imagen('anim_frame.png'), valor('no'))}</div>`,
+    `<div class="demo">${caja('GIF · WEBP · SVG', tira([fotograma(38, 1), fotograma(24, 2), fotograma(12, 3)]), valor('si'))}${caja('JPG · PNG', tira([fotograma(38, 1)]), valor('no'))}</div>`,
   color: () => `<div class="demo">${caja('Millones', imagen('grad.jpg'))}${caja('256', imagen('grad.gif'))}</div>`,
   indexado: () => `<div class="demo">${caja('16', imagen('grad16.png'))}${caja('256', imagen('grad.gif'))}</div>`,
   vectorial: () =>
