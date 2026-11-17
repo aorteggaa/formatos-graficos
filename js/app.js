@@ -220,6 +220,47 @@ function pantallaAyuda() {
   return html + `</div><div class="btns"><button class="btn" id="verGuia">Ver guía</button></div>`;
 }
 
+const PREGUNTAS = [
+  ['UI', 'Los colores de la aplicación son agradables y combinan bien.'],
+  ['UI', 'El texto se lee con facilidad (tamaño y contraste).'],
+  ['UI', 'Los iconos de sí y no se entienden sin explicación.'],
+  ['UI', 'Los iconos de caras indican bien el nivel de calidad.'],
+  ['UI', 'El icono de cada concepto representa bien lo que significa.'],
+  ['UI', 'Las imágenes de ejemplo muestran claramente las diferencias entre formatos.'],
+  ['UI', 'Los elementos de cada pantalla están ordenados y claros.'],
+  ['UI', 'Todas las pantallas mantienen el mismo estilo.'],
+  ['UI', 'Los botones y elementos pulsables se distinguen bien del resto.'],
+  ['UI', 'La aplicación se ve bien en el móvil.'],
+  ['UX', 'Entiendo para qué sirve la aplicación nada más entrar.'],
+  ['UX', 'Es fácil encontrar la información de un formato concreto.'],
+  ['UX', 'Es fácil moverse entre las pantallas y volver atrás.'],
+  ['UX', 'La guía rápida del inicio me ayuda a empezar.'],
+  ['UX', 'La pantalla de Ayuda resuelve mis dudas sobre los iconos.'],
+  ['UX', 'Los mensajes que aparecen al pasar el ratón son útiles.'],
+  ['UX', 'Con la tabla Comparar veo las diferencias de un vistazo.'],
+  ['UX', 'Después de usar la app sé qué formato elegir en cada caso.'],
+  ['UX', 'No he necesitado leer explicaciones largas para entender los conceptos.'],
+  ['UX', 'Recomendaría la aplicación para aprender sobre formatos de imagen.'],
+];
+
+function pantallaCuestionario() {
+  let html = `<h1>Cuestionario</h1><p class="escala">1 = nada de acuerdo · 4 = muy de acuerdo</p><form id="cuestionario">`;
+  for (const bloque of ['UI', 'UX']) {
+    html += `<h2>${bloque === 'UI' ? 'Diseño de la interfaz (UI)' : 'Experiencia de usuario (UX)'}</h2>`;
+    PREGUNTAS.forEach(([b, texto], i) => {
+      if (b !== bloque) return;
+      html += `<div class="pregunta" id="p${i + 1}"><span>${i + 1}. ${texto}</span><div class="opciones">`;
+      for (let n = 1; n <= 4; n++) html += `<label><input type="radio" name="p${i + 1}" value="${n}"><span>${n}</span></label>`;
+      html += `</div></div>`;
+    });
+  }
+  return html + `<button class="btn main" type="submit">Enviar</button></form>`;
+}
+
+function pantallaGracias() {
+  return `<div class="gracias">${valor('si', 64)}<h1>¡Gracias!</h1><button class="btn" data-ir="inicio">Inicio</button></div>`;
+}
+
 function mostrar() {
   const id = location.hash.slice(1) || 'inicio';
   let html,
@@ -227,6 +268,7 @@ function mostrar() {
   if (id === 'conceptos') html = pantallaConceptos();
   else if (id === 'comparar') html = pantallaComparar();
   else if (id === 'ayuda') html = pantallaAyuda();
+  else if (id === 'cuestionario') html = pantallaCuestionario();
   else if (FORMATOS[id]) {
     html = pantallaFormato(id);
     menu = 'inicio';
@@ -259,6 +301,24 @@ document.addEventListener('click', (e) => {
       localStorage.setItem('guiaVista', 'si');
     } catch (err) {}
   }
+});
+
+document.addEventListener('submit', (e) => {
+  if (e.target.id !== 'cuestionario') return;
+  e.preventDefault();
+  let primera = null;
+  PREGUNTAS.forEach((p, i) => {
+    const fila = document.getElementById('p' + (i + 1));
+    const marcada = document.querySelector(`input[name="p${i + 1}"]:checked`);
+    fila.classList.toggle('falta', !marcada);
+    if (!marcada && !primera) primera = fila;
+  });
+  if (primera) {
+    primera.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  document.getElementById('app').innerHTML = pantallaGracias();
+  window.scrollTo(0, 0);
 });
 
 window.addEventListener('hashchange', mostrar);
